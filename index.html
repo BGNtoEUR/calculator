@@ -2,7 +2,7 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Калкулатор BGN/EUR</title>
     <style>
         * {
@@ -15,7 +15,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 30px;
+            padding: 25px;
             max-width: 500px;
             width: 100%;
         }
@@ -110,6 +110,19 @@
             border-left-color: #f44336;
         }
 
+        .result-box.illegal {
+            background: #fff8e1;
+            border-left-color: #ffc107;
+            border: 2px dashed #ffc107;
+        }
+
+        .illegal-notice {
+            font-size: 12px;
+            color: #f57c00;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
         .result-text {
             font-size: 14px;
             color: #333;
@@ -156,16 +169,30 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
             .container {
-                padding: 20px;
+                padding: 15px;
+                border-radius: 15px;
             }
 
             h1 {
                 font-size: 20px;
             }
 
+            .section {
+                padding: 15px;
+            }
+
             input {
                 font-size: 16px;
+                padding: 10px 12px;
+            }
+
+            .result-text {
+                font-size: 13px;
             }
         }
     </style>
@@ -302,9 +329,16 @@
                     resultDiv.innerHTML = `
                         <div class="result-box warning">
                             <div class="result-text">
-                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                <strong>💵 Ресто:</strong><br>
                                 Давате: ${payBGN.toFixed(2)} лева<br>
-                                Ресто: ${changeEUR.toFixed(2)} евро
+                                <strong>✅ Законово ресто (само EUR): ${changeEUR.toFixed(2)} евро</strong>
+                            </div>
+                        </div>
+                        <div class="result-box illegal">
+                            <div class="result-text">
+                                ⚠️ Ако магазинът върне в BGN (незаконно):<br>
+                                ${changeBGN.toFixed(2)} лева
+                                <div class="illegal-notice">⚖️ По закон рестото трябва да е САМО в EUR!</div>
                             </div>
                         </div>
                     `;
@@ -338,12 +372,20 @@
                 } else if (difference > 0) {
                     // Плаща повече
                     const changeEUR = bgnToEur(difference);
+                    const changeBGN = difference;
                     resultDiv.innerHTML = `
                         <div class="result-box warning">
                             <div class="result-text">
-                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                <strong>💵 Ресто:</strong><br>
                                 Давате: ${payBGN.toFixed(2)} лева + ${payEUR.toFixed(2)} евро<br>
-                                Ресто: ${changeEUR.toFixed(2)} евро
+                                <strong>✅ Законово ресто (само EUR): ${changeEUR.toFixed(2)} евро</strong>
+                            </div>
+                        </div>
+                        <div class="result-box illegal">
+                            <div class="result-text">
+                                ⚠️ Ако магазинът върне в BGN (незаконно):<br>
+                                ${changeBGN.toFixed(2)} лева
+                                <div class="illegal-notice">⚖️ По закон рестото трябва да е САМО в EUR!</div>
                             </div>
                         </div>
                     `;
@@ -383,9 +425,16 @@
                     resultDiv.innerHTML = `
                         <div class="result-box warning">
                             <div class="result-text">
-                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                <strong>💵 Ресто:</strong><br>
                                 Давате: ${payEUR.toFixed(2)} евро<br>
-                                Ресто: ${changeEUR.toFixed(2)} евро
+                                <strong>✅ Законово ресто (само EUR): ${changeEUR.toFixed(2)} евро</strong>
+                            </div>
+                        </div>
+                        <div class="result-box illegal">
+                            <div class="result-text">
+                                ⚠️ Ако магазинът върне в BGN (незаконно):<br>
+                                ${changeBGN.toFixed(2)} лева
+                                <div class="illegal-notice">⚖️ По закон рестото трябва да е САМО в EUR!</div>
                             </div>
                         </div>
                     `;
