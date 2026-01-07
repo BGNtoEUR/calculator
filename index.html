@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калкулатор BGN/EUR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 25px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:disabled {
+            background: #f5f5f5;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .result-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .result-box.warning {
+            background: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .result-box.error {
+            background: #ffebee;
+            border-left-color: #f44336;
+        }
+
+        .result-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .result-text strong {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .exchange-rate {
+            text-align: center;
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .clear-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .clear-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            input {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💶 Калкулатор BGN/EUR</h1>
+        <p class="subtitle">Официален курс: 1 EUR = 1.95583 BGN</p>
+        
+        <div class="exchange-rate">
+            Фиксиран курс: 1 EUR = 1.95583 BGN
+        </div>
+
+        <div class="section">
+            <div class="section-title">📋 Цена за плащане</div>
+            
+            <div class="input-group">
+                <label for="priceBGN">Цена в лева (BGN):</label>
+                <input type="number" id="priceBGN" step="0.01" placeholder="Напр. 50.00">
+            </div>
+
+            <div class="input-group">
+                <label for="priceEUR">Цена в евро (EUR):</label>
+                <input type="number" id="priceEUR" step="0.01" placeholder="Напр. 25.57">
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">💰 Как ще платите?</div>
+            
+            <div class="input-group">
+                <label for="payBGN">Ще платя с лева (BGN):</label>
+                <input type="number" id="payBGN" step="0.01" placeholder="Напр. 30.00">
+            </div>
+
+            <div class="input-group">
+                <label for="payEUR">Ще платя с евро (EUR):</label>
+                <input type="number" id="payEUR" step="0.01" placeholder="Напр. 10.23">
+            </div>
+
+            <div id="paymentResult"></div>
+        </div>
+
+        <button class="clear-btn" onclick="clearAll()">🔄 Изчисти всичко</button>
+    </div>
+
+    <script>
+        const EXCHANGE_RATE = 1.95583;
+
+        // Закръгляне до 2 знака
+        function round(num) {
+            return Math.round(num * 100) / 100;
+        }
+
+        // Конвертиране BGN към EUR
+        function bgnToEur(bgn) {
+            return round(bgn / EXCHANGE_RATE);
+        }
+
+        // Конвертиране EUR към BGN
+        function eurToBgn(eur) {
+            return round(eur * EXCHANGE_RATE);
+        }
+
+        // Цена в лева
+        document.getElementById('priceBGN').addEventListener('input', function(e) {
+            const bgn = parseFloat(e.target.value);
+            if (!isNaN(bgn) && bgn > 0) {
+                document.getElementById('priceEUR').value = bgnToEur(bgn).toFixed(2);
+            } else {
+                document.getElementById('priceEUR').value = '';
+            }
+            calculatePayment();
+        });
+
+        // Цена в евро
+        document.getElementById('priceEUR').addEventListener('input', function(e) {
+            const eur = parseFloat(e.target.value);
+            if (!isNaN(eur) && eur > 0) {
+                document.getElementById('priceBGN').value = eurToBgn(eur).toFixed(2);
+            } else {
+                document.getElementById('priceBGN').value = '';
+            }
+            calculatePayment();
+        });
+
+        // Плащане в лева
+        document.getElementById('payBGN').addEventListener('input', function(e) {
+            calculatePayment();
+        });
+
+        // Плащане в евро
+        document.getElementById('payEUR').addEventListener('input', function(e) {
+            calculatePayment();
+        });
+
+        function calculatePayment() {
+            const priceBGN = parseFloat(document.getElementById('priceBGN').value) || 0;
+            const priceEUR = parseFloat(document.getElementById('priceEUR').value) || 0;
+            const payBGN = parseFloat(document.getElementById('payBGN').value) || 0;
+            const payEUR = parseFloat(document.getElementById('payEUR').value) || 0;
+
+            const resultDiv = document.getElementById('paymentResult');
+
+            // Ако няма въведена цена
+            if (priceBGN === 0 && priceEUR === 0) {
+                resultDiv.innerHTML = '';
+                return;
+            }
+
+            // Определяме цената (приоритет на лева)
+            const totalPrice = priceBGN > 0 ? priceBGN : eurToBgn(priceEUR);
+            const totalPriceEUR = bgnToEur(totalPrice);
+
+            // Ако има само плащане в лева
+            if (payBGN > 0 && payEUR === 0) {
+                const remainingBGN = totalPrice - payBGN;
+
+                if (remainingBGN > 0) {
+                    // Трябва да доплати
+                    const remainingEUR = bgnToEur(remainingBGN);
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <div class="result-text">
+                                <strong>💳 Трябва да платите:</strong><br>
+                                ${payBGN.toFixed(2)} лева + ${remainingEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else if (remainingBGN < 0) {
+                    // Плаща повече - ресто в евро
+                    const changeBGN = Math.abs(remainingBGN);
+                    const changeEUR = bgnToEur(changeBGN);
+                    resultDiv.innerHTML = `
+                        <div class="result-box warning">
+                            <div class="result-text">
+                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                Давате: ${payBGN.toFixed(2)} лева<br>
+                                Ресто: ${changeEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Точна сума
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <div class="result-text">
+                                <strong>✅ Точна сума!</strong><br>
+                                Платете: ${payBGN.toFixed(2)} лева
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            // Ако има плащане и в лева и в евро
+            else if (payBGN > 0 && payEUR > 0) {
+                const payBGNTotal = payBGN + eurToBgn(payEUR);
+                const difference = payBGNTotal - totalPrice;
+
+                if (Math.abs(difference) < 0.01) {
+                    // Точна сума
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <div class="result-text">
+                                <strong>✅ Точна сума!</strong><br>
+                                Платете: ${payBGN.toFixed(2)} лева + ${payEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else if (difference > 0) {
+                    // Плаща повече
+                    const changeEUR = bgnToEur(difference);
+                    resultDiv.innerHTML = `
+                        <div class="result-box warning">
+                            <div class="result-text">
+                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                Давате: ${payBGN.toFixed(2)} лева + ${payEUR.toFixed(2)} евро<br>
+                                Ресто: ${changeEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Плаща по-малко
+                    const remainingEUR = bgnToEur(Math.abs(difference));
+                    resultDiv.innerHTML = `
+                        <div class="result-box error">
+                            <div class="result-text">
+                                <strong>❌ Недостига:</strong><br>
+                                Давате: ${payBGN.toFixed(2)} лева + ${payEUR.toFixed(2)} евро<br>
+                                Трябва още: ${remainingEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            // Ако има само плащане в евро
+            else if (payEUR > 0 && payBGN === 0) {
+                const payEURtoBGN = eurToBgn(payEUR);
+                const remainingBGN = totalPrice - payEURtoBGN;
+
+                if (remainingBGN > 0) {
+                    // Трябва да доплати в лева
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <div class="result-text">
+                                <strong>💳 Трябва да платите:</strong><br>
+                                ${remainingBGN.toFixed(2)} лева + ${payEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else if (remainingBGN < 0) {
+                    // Плаща повече - ресто в евро
+                    const changeBGN = Math.abs(remainingBGN);
+                    const changeEUR = bgnToEur(changeBGN);
+                    resultDiv.innerHTML = `
+                        <div class="result-box warning">
+                            <div class="result-text">
+                                <strong>💵 Ресто (само в EUR):</strong><br>
+                                Давате: ${payEUR.toFixed(2)} евро<br>
+                                Ресто: ${changeEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Точна сума
+                    resultDiv.innerHTML = `
+                        <div class="result-box">
+                            <div class="result-text">
+                                <strong>✅ Точна сума!</strong><br>
+                                Платете: ${payEUR.toFixed(2)} евро
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                resultDiv.innerHTML = '';
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('priceBGN').value = '';
+            document.getElementById('priceEUR').value = '';
+            document.getElementById('payBGN').value = '';
+            document.getElementById('payEUR').value = '';
+            document.getElementById('paymentResult').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
