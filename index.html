@@ -166,6 +166,174 @@
             transform: translateY(0);
         }
 
+        /* Popup styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .modal-title {
+            color: #667eea;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-right: 30px;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .modal-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .modal-section li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .modal-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .law-quote {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #444;
+            font-style: italic;
+        }
+
+        .law-link-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .law-link-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .info-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .info-link:hover {
+            color: #5568d3;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                margin: 10% auto;
+                padding: 20px;
+                width: 95%;
+                max-height: 85vh;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .modal-section h3 {
+                font-size: 15px;
+            }
+
+            .modal-section li {
+                font-size: 14px;
+            }
+
+            .law-quote {
+                font-size: 13px;
+            }
+        }
+
         @media (max-width: 480px) {
             body {
                 padding: 5px;
@@ -235,6 +403,56 @@
         </div>
 
         <button class="clear-btn" onclick="clearAll()">🔄 Изчисти всичко</button>
+        
+        <a class="info-link" onclick="openModal()">ℹ️ Какво казва законът за рестото?</a>
+    </div>
+
+    <!-- Popup Modal -->
+    <div id="lawModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            
+            <h2 class="modal-title">📜 Период на двойно обращение BGN/EUR</h2>
+            
+            <div class="modal-section">
+                <h3>Основна информация:</h3>
+                <ul>
+                    <li><strong>Период:</strong> Януари 2026 (един месец от въвеждане на еврото)</li>
+                    <li><strong>Ресто:</strong> Предпочитано в евро; ако няма налични евро - в лева</li>
+                    <li><strong>Монети в лева:</strong> Максимум 50 броя при една покупка</li>
+                </ul>
+            </div>
+
+            <div class="modal-section">
+                <h3>Извадка от Закона за въвеждане на еврото в Република България:</h3>
+                <div class="law-quote">
+                    <strong>Раздел III<br>
+                    Период на двойно обращение на лева и еврото</strong><br><br>
+                    
+                    <strong>Период на двойно обращение на лева и еврото</strong><br><br>
+                    
+                    <strong>Чл. 24.</strong> В съответствие с чл. 15 от Регламент (EО) № 974/98 от датата на въвеждане на еврото в Република България за период от един месец банкнотите и монетите в левове продължават да бъдат законно платежно средство на територията на Република България (период на двойно обращение на лева и еврото).<br><br>
+                    
+                    <strong>Правила в периода на двойно обращение</strong><br><br>
+                    
+                    <strong>Чл. 25.</strong> (1) В периода на двойно обращение при получено плащане в брой в левове или в евро търговецът връща остатъка изцяло в евро. Когато търговецът няма достатъчна моментна наличност да върне остатъка изцяло в евро, връща остатъка изцяло в левове.<br><br>
+                    
+                    (2) В периода на двойно обращение търговецът може да не приема повече от 50 броя монети в левове, включително стотинки, при една трансакция.<br><br>
+                    
+                    (3) В периода на двойно обращение при рекламация на стока или услуга, когато потребителят има право да развали договора и да му бъде възстановена заплатената от него сума, търговецът връща платената сума изцяло в евро. Когато търговецът няма достатъчна моментна наличност да върне платената сума в брой в евро, връща платената сума изцяло в левове.<br><br>
+                    
+                    (4) От датата на въвеждане на еврото в Република България при извършване от търговци на операции в брой с автомати, устройства и системи на самообслужване, включително без електрическо захранване, се използва само евро.<br><br>
+                    
+                    (5) (Изм. – ДВ, бр. 65 от 2025 г.) При връщане на остатъка по ал. 1 в евро или на платената сума по ал. 3 в евро търговецът предоставя устно информация относно паричната стойност на остатъка или платената сума в левове, при поискване от потребителя.
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://evroto.bg/bg/euro/eurozone/documents#" target="_blank" class="law-link-btn">
+                    🔗 Прочети целия закон
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -456,6 +674,31 @@
             document.getElementById('payEUR').value = '';
             document.getElementById('paymentResult').innerHTML = '';
         }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('lawModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            document.getElementById('lawModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        function closeModalOnOutsideClick(event) {
+            const modal = document.getElementById('lawModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
